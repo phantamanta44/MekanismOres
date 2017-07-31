@@ -1,0 +1,24 @@
+[
+  {
+    "modid": "mekores",
+    "name": "MekanismOres",
+    "description": "Another one bites the shards!",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "phantamanta44"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "requiredMods": [
+      "Mekanism"
+    ],
+    "dependencies": [
+      "Mekanism"
+    ],
+    "useDependencyInformation": true
+  }
+]
