@@ -68,7 +68,7 @@ public enum OreType {
     public final String key;
 
     private Boolean valid = null;
-    private Integer colour = null;
+    private int colour = null;
 
     OreType(String key) {
         this.key = key;
@@ -88,38 +88,39 @@ public enum OreType {
     }
 
     public int getColour() {
-        if (colour != null)
-            return colour;
-        ItemStack stack = OreDictHelper.getStack("ingot" + key, 1);
-        if (stack == null)
-            stack = OreDictHelper.getStack("dust" + key, 1);
-        if (stack == null) {
-            colour = -1;
-        } else {
-            IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
-            TextureAtlasSprite sprite = model.getParticleTexture();
-            IResource res = null;
-            try {
-                res = Minecraft.getMinecraft().getResourceManager().getResource(TextureMap.LOCATION_BLOCKS_TEXTURE); // FIXME file not found
-                try (BufferedInputStream in = new BufferedInputStream(res.getInputStream())) {
-                    BufferedImage img = ImageIO.read(in);
-                    int red = 0, green = 0, blue = 0;
-                    for (int rgb : img.getRGB(sprite.getOriginX(), sprite.getOriginY(), sprite.getIconWidth(), sprite.getIconHeight(), null, 0, 1)) {
-                        red += (rgb & 0xFF0000) >> 16;
-                        green += (rgb & 0x00FF00) >> 8;
-                        blue += rgb & 0x0000FF;
+        return colour;
+    }
+
+    public static void cacheColours() {
+        for (OreType type : values()) {
+            ItemStack stack = OreDictHelper.getStack("ingot" + type.key, 1);
+            if (stack == null)
+                stack = OreDictHelper.getStack("dust" + type.key, 1);
+            if (stack == null) {
+                type.colour = -1;
+            } else {
+                try {
+                    IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
+                    TextureAtlasSprite sprite = model.getParticleTexture();
+                    byte[] atlas = ClientEventListener.getAtlas();
+                    int rBin = 0, gBin = 0, bBin = 0;
+                    for (int y = 0; y < sprite.getIconHeight(); y++) {
+                        for (int x = 0; x < sprite.getIconWidth(); x++) {
+                            int index = y * sprite.getIconWidth() * 4 + x * 4;
+                            if (index + 3 > 127) {
+                                rBin += atlas[index];
+                                gBin += atlas[index + 1];
+                                bBin += atlas[index + 2];
+                            }
+                        }
                     }
                     int size = sprite.getIconWidth() * sprite.getIconHeight();
-                    colour = ((red / size) << 16) | ((green / size) << 8) | (blue / size);
+                    type.colour = ((rBin / size) << 16) | ((gBin / size) << 8) | (bBin / size);
+                } catch (Exception e) {
+                    e.printStackTrace(); // TODO Log errors better
                 }
-            } catch (Exception e) {
-                e.printStackTrace(); // TODO Log error better
-                colour = -1;
-            } finally {
-                IOUtils.closeQuietly(res);
             }
         }
-        return colour;
     }
 
 }

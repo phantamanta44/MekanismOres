@@ -12,8 +12,15 @@ import net.minecraftforge.client.model.ModelLoader;
 public class ClientProxy extends CommonProxy {
 
     @Override
+    public void onPreInit() {
+        super.onPreInit();
+        MinecraftForge.EVENT_BUS.register(new ClientEventListener());
+    }
+
+    @Override
     public void onInit() {
         super.onInit();
+        OreType.cacheColours();
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(
             (stack, tint) -> ItemMekanismOre.getStage(stack).type.getColour(), MOItems.mekanismOre);
     }
