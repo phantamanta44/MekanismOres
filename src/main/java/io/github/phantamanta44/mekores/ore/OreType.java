@@ -68,7 +68,7 @@ public enum OreType {
     public final String key;
 
     private Boolean valid = null;
-    private int colour = null;
+    private int colour = -1;
 
     OreType(String key) {
         this.key = key;
@@ -96,9 +96,7 @@ public enum OreType {
             ItemStack stack = OreDictHelper.getStack("ingot" + type.key, 1);
             if (stack == null)
                 stack = OreDictHelper.getStack("dust" + type.key, 1);
-            if (stack == null) {
-                type.colour = -1;
-            } else {
+            if (stack != null) {
                 try {
                     IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
                     TextureAtlasSprite sprite = model.getParticleTexture();
