@@ -1,18 +1,13 @@
 package io.github.phantamanta44.mekores.ore;
 
+import io.github.phantamanta44.mekores.MekOres;
+import io.github.phantamanta44.mekores.client.ClientEventListener;
 import io.github.phantamanta44.mekores.constant.LangConst;
 import io.github.phantamanta44.mekores.util.OreDictHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.item.ItemStack;
-import org.apache.commons.io.IOUtils;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 
 public enum OreType {
 
@@ -92,30 +87,39 @@ public enum OreType {
     }
 
     public static void cacheColours() {
+        MekOres.LOGGER.info("Caching ore colours...");
         for (OreType type : values()) {
-            ItemStack stack = OreDictHelper.getStack("ingot" + type.key, 1);
-            if (stack == null)
-                stack = OreDictHelper.getStack("dust" + type.key, 1);
-            if (stack != null) {
-                try {
-                    IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
-                    TextureAtlasSprite sprite = model.getParticleTexture();
-                    byte[] atlas = ClientEventListener.getAtlas();
-                    int rBin = 0, gBin = 0, bBin = 0;
-                    for (int y = 0; y < sprite.getIconHeight(); y++) {
-                        for (int x = 0; x < sprite.getIconWidth(); x++) {
-                            int index = y * sprite.getIconWidth() * 4 + x * 4;
-                            if (index + 3 > 127) {
-                                rBin += atlas[index];
-                                gBin += atlas[index + 1];
-                                bBin += atlas[index + 2];
+            if (type.isValid()) {
+                ItemStack stack = OreDictHelper.getStack("ingot" + type.key, 1);
+                if (stack == null)
+                    stack = OreDictHelper.getStack("dust" + type.key, 1);
+                if (stack != null) {
+                    try {
+                        IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
+                        TextureAtlasSprite sprite = model.getParticleTexture();
+                        int[] atlas = ClientEventListener.getAtlas();
+                        int rBin = 0, gBin = 0, bBin = 0, total = 0;
+                        for (int y = 0; y < sprite.getIconHeight(); y++) {
+                            for (int x = 0; x < sprite.getIconWidth(); x++) {
+                                int index = (y + sprite.getOriginY()) * 4096 + x + sprite.getOriginX();
+                                int b1 = (atlas[index]) & 0xFF;
+                                int b2 = (atlas[index] >> 8) & 0xFF;
+                                int b3 = (atlas[index] >> 16) & 0xFF;
+                                int b4 = (atlas[index] >> 24) & 0xFF;
+                                int value = b1 << 24 | b2 << 16 | b3 << 8 | b4;
+                                int alpha = (value >>> 24) & 0xFF;
+                                if (alpha > 127) {
+                                    rBin += (value >>> 16) & 0xFF;
+                                    gBin += (value >>> 8) & 0xFF;
+                                    bBin += value & 0xFF;
+                                    total++;
+                                }
                             }
                         }
+                        type.colour = ((rBin / total) << 16) | ((gBin / total) << 8) | (bBin / total);
+                    } catch (Exception e) {
+                        MekOres.LOGGER.warn("Failed to calculate colour for " + type.name(), e);
                     }
-                    int size = sprite.getIconWidth() * sprite.getIconHeight();
-                    type.colour = ((rBin / size) << 16) | ((gBin / size) << 8) | (bBin / size);
-                } catch (Exception e) {
-                    e.printStackTrace(); // TODO Log errors better
                 }
             }
         }

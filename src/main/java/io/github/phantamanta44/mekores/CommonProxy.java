@@ -12,4 +12,8 @@ public class CommonProxy {
         MOItems.mekanismOre.registerRecipes();
     }
 
+    public void onPostInit() {
+        // NO-OP
+    }
+
 }
