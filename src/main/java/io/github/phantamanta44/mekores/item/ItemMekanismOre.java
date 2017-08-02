@@ -103,9 +103,9 @@ public class ItemMekanismOre extends ItemModSubs {
                                 nextStage(stage, 1));
                         break;
                     case DIRTY_DUST:
-                        IMCHelper.addEnrichmentRecipe(
-                                stage.getOre(1),
-                                OreDictHelper.getStack("dust" + stage.type.key, 1));
+                        IMCHelper.addEnrichmentRecipe(stage.getOre(1), nextStage(stage, 1));
+                        for (ItemStack stack : OreDictionary.getOres("ore" + stage.type.key))
+                            IMCHelper.addEnrichmentRecipe(stack, nextStage(stage, 2));
                         break;
                     case DUST:
                         if (OreDictHelper.exists("ingot" + stage.type.key)) {

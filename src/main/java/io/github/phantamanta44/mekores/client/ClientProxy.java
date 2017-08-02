@@ -4,6 +4,7 @@ import io.github.phantamanta44.mekores.CommonProxy;
 import io.github.phantamanta44.mekores.constant.MOConst;
 import io.github.phantamanta44.mekores.item.ItemMekanismOre;
 import io.github.phantamanta44.mekores.item.MOItems;
+import io.github.phantamanta44.mekores.ore.OreType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -11,6 +12,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy {
+
+    private static boolean gameInit = false;
 
     @Override
     public void onPreInit() {
@@ -26,8 +29,25 @@ public class ClientProxy extends CommonProxy {
             (stack, tint) -> ItemMekanismOre.getStage(stack).type.getColour(), MOItems.mekanismOre);
     }
 
+    @Override
+    public void onPostInit() {
+        super.onPostInit();
+    }
+
     public static void registerItemModel(Item item, int meta, String name) {
         ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(MOConst.MOD_PREF + name));
+    }
+
+    public static void gameInit() {
+        if (!gameInit) {
+            gameInit = true;
+            cacheOreColours();
+        }
+    }
+
+    public static void cacheOreColours() {
+        if (gameInit)
+            OreType.cacheColours();
     }
 
 }
