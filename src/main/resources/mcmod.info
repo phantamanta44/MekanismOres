@@ -14,20 +14,10 @@
     "logoFile": "",
     "screenshots": [],
     "requiredMods": [
-      "Mekanism"
+      "mekanism"
     ],
     "dependencies": [
-      "Mekanism",
-      "IC2",
-      "galacticraftcore",
-      "galacticraftplanets",
-      "thermalfoundation",
-      "tconstruct",
-      "modernmetals",
-      "basemetals",
-      "immersiveengineering",
-      "techreborn",
-      "bigreactors"
+      "mekanism"
     ],
     "useDependencyInformation": true
   }

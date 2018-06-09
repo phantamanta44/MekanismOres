@@ -1,10 +1,8 @@
 package io.github.phantamanta44.mekores.item.base;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import java.util.List;
+import net.minecraft.util.NonNullList;
 
 public class ItemModSubs extends ItemMod {
 
@@ -17,9 +15,9 @@ public class ItemModSubs extends ItemMod {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems) {
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         for (int i = 0; i < subs; i++)
-            subItems.add(new ItemStack(item, 1, i));
+            subItems.add(new ItemStack(this, 1, i));
     }
 
     @Override

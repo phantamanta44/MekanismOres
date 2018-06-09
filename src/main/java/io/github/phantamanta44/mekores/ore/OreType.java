@@ -11,54 +11,46 @@ import net.minecraft.item.ItemStack;
 
 public enum OreType {
 
-    ALUMINIUM("Aluminum"),
+    // big reactors
+    URANIUM("Uranium"),
+    YELLORIUM("Yellorium"),
+
+    // thermal
     NICKEL("Nickel"),
     PLATINUM("Platinum"),
     IRIDIUM("Iridium"),
     MITHRIL("Mithril"),
-    DRACONIUM("Draconium"),
+    ALUMINUM("Aluminum"),
+
+    // tcon
     COBALT("Cobalt"),
     ARDITE("Ardite"),
-    YELLORIUM("Yellorium"),
-    URANIUM("Uranium"),
-    TITANIUM("Titanium"),
-    DESH("Desh"),
-    CHROME("Chrome"),
-    TUNGSTEN("Tungsten"),
-    ZINC("Zinc"),
-    THORIUM("Thorium"),
+
+    // astral sorc
+    ASTRAL_STARMETAL("AstralStarmetal"),
+
+    // draconic evo
+    DRACONIUM("Draconium"),
+
+    // nuclearcraft
+    BERYLLIUM("Beryllium"),
     BORON("Boron"),
     LITHIUM("Lithium"),
     MAGNESIUM("Magnesium"),
-    CADMIUM("Cadmium"),
-    MANGANESE("Manganese"),
-    PLUTONIUM("Plutonium"),
-    RUTILE("Rutile"),
-    TANTALUM("Tantalum"),
-    ZIRCONIUM("Zirconium")/*,
-    IGNATIUS("Ignatius"),
-    SHADOWIRON("Shadow Iron"),
-    LEMURITE("Lemurite"),
-    MIDASIUM("Midasium"),
-    VYROXERES("Vyroxeres"),
-    CERUCLASE("Ceruclase"),
-    ADLUORITE("Adluorite"),
-    KALENDRITE("Kalendrite"),
-    VULCANITE("Vulcanite"),
-    SANGUINITE("Sanguinite"),
-    PROMETHEUM("Prometheum"),
-    DEEPIRON("Deep Iron"),
-    INFUSCOLIUM("Infuscolium"),
-    OURECLASE("Oureclase"),
-    AREDRITE("Aredrite"),
-    ASTALSILVER("Astral Silver"),
-    CARMOT("Carmot"),
-    RUBRACIUM("Rubracium"),
-    ORICHALCUM("Orichalcum"),
-    ADAMANTINE("Adamantine"),
-    ATLARUS("Atlarus"),
-    EXIMITE("Eximite"),
-    MEUTOITE("Meutoite")*/;
+    THORIUM("Thorium"),
+    ZIRCONIUM("Zirconium"),
+
+    // gc
+    TITANIUM("Titanium"),
+    DESH("Desh"),
+
+    // extra planets
+    CARBON("Carbon"),
+    DARK_IRON("DarkIron"),
+    TUNGSTEN("Tungsten"),
+    ZINC("Zinc"),
+    MERCURY("Mercury"),
+    PALLADIUM("Palladium");
 
     public final String key;
 
@@ -79,7 +71,7 @@ public enum OreType {
 
     public boolean isValid() {
         return valid != null ? valid : (valid
-                = OreDictHelper.exists("ore" + key) && (OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key)));
+                = OreDictHelper.exists("ore" + key) && ((OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key))));
     }
 
     public int getColour() {

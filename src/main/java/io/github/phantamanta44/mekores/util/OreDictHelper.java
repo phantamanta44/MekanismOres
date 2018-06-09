@@ -12,12 +12,12 @@ public class OreDictHelper {
         if (items.isEmpty())
             return null;
         ItemStack stack = items.get(0).copy();
-        stack.stackSize = qty;
+        stack.setCount(qty);
         return stack;
     }
 
     public static boolean exists(String entry) {
-        return OreDictionary.doesOreNameExist(entry);
+        return !OreDictionary.getOres(entry).isEmpty();
     }
 
 }

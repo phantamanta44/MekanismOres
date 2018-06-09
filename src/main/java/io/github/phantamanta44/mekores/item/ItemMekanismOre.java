@@ -1,5 +1,6 @@
 package io.github.phantamanta44.mekores.item;
 
+import io.github.phantamanta44.mekores.MekOres;
 import io.github.phantamanta44.mekores.client.ClientProxy;
 import io.github.phantamanta44.mekores.constant.LangConst;
 import io.github.phantamanta44.mekores.item.base.ItemModSubs;
@@ -10,7 +11,10 @@ import io.github.phantamanta44.mekores.util.GasHelper;
 import io.github.phantamanta44.mekores.util.IMCHelper;
 import io.github.phantamanta44.mekores.util.OreDictHelper;
 import mekanism.api.gas.GasRegistry;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -37,7 +41,7 @@ public class ItemMekanismOre extends ItemModSubs {
         super(LangConst.ITEM_MEK_ORE_NAME, buildRegistry());
         for (int i = 0; i < registry.length; i++) {
             SpecificOreStage stage = registry[i];
-            OreDictionary.registerOre(stage.getEntry(), new ItemStack(this, 1, i));
+            MekOres.PROXY.queueRegistration(new ItemStack(this, 1, i), stage.getEntry());
             switch (stage.stage) {
                 case CRYSTAL:
                     ClientProxy.registerItemModel(this, i, "crystal");
@@ -53,6 +57,17 @@ public class ItemMekanismOre extends ItemModSubs {
                     break;
                 case DUST:
                     ClientProxy.registerItemModel(this, i, "dust");
+            }
+        }
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (tab == MOItems.CREATIVE_TAB) {
+            for (int i = 0; i < subs; i++) {
+                ItemStack stack = new ItemStack(this, 1, i);
+                if (getStage(stack).type.isValid())
+                    subItems.add(stack);
             }
         }
     }
@@ -109,8 +124,11 @@ public class ItemMekanismOre extends ItemModSubs {
                         break;
                     case DUST:
                         if (OreDictHelper.exists("ingot" + stage.type.key)) {
-                            GameRegistry.addSmelting(
-                                    stage.getOre(1), OreDictHelper.getStack("ingot" + stage.type.key, 1), 0);
+                            ItemStack input = stage.getOre(1);
+                            if (FurnaceRecipes.instance().getSmeltingResult(input).isEmpty()) {
+                                GameRegistry.addSmelting(input,
+                                        OreDictHelper.getStack("ingot" + stage.type.key, 1), 0);
+                            }
                         }
                         break;
                 }
