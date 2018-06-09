@@ -4,6 +4,6 @@ public class MOConst {
 
     public static final String MOD_ID = "mekores";
     public static final String MOD_PREF = MOD_ID + ":";
-    public static final String MOD_VERSION = "1.0.0";
+    public static final String MOD_VERSION = "2.0.0";
 
 }
