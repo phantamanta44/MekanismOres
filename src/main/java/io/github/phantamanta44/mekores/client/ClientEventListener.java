@@ -29,7 +29,7 @@ public class ClientEventListener {
                 atlas = new int[buf.remaining()];
                 buf.get(atlas);
                 atlasWidth = width;
-                ClientProxy.cacheOreColours();
+                MekOres.PROXY.cacheOreColours();
             } else {
                 MekOres.LOGGER.info("Ignoring {}x{} atlas stitch event.", width, height);
             }
@@ -41,7 +41,7 @@ public class ClientEventListener {
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
         if (event.getGui() instanceof GuiMainMenu)
-            ClientProxy.gameInit(); // Hacky, but works
+            MekOres.PROXY.gameInit(); // Hacky, but works
     }
 
     public static int[] getAtlas() {

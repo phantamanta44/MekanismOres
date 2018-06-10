@@ -17,7 +17,17 @@
       "mekanism"
     ],
     "dependencies": [
-      "mekanism"
+      "mekanism",
+      "tconstruct",
+      "astralsorcery",
+      "thermalfoundation",
+      "ic2",
+      "bigreactors",
+      "draconicevolution",
+      "nuclearcraft",
+      "galacticraftcore",
+      "galacticraftplanets",
+      "extraplanets"
     ],
     "useDependencyInformation": true
   }

@@ -1,7 +1,6 @@
 package io.github.phantamanta44.mekores.item;
 
 import io.github.phantamanta44.mekores.MekOres;
-import io.github.phantamanta44.mekores.client.ClientProxy;
 import io.github.phantamanta44.mekores.constant.LangConst;
 import io.github.phantamanta44.mekores.item.base.ItemModSubs;
 import io.github.phantamanta44.mekores.ore.OreStage;
@@ -44,19 +43,19 @@ public class ItemMekanismOre extends ItemModSubs {
             MekOres.PROXY.queueRegistration(new ItemStack(this, 1, i), stage.getEntry());
             switch (stage.stage) {
                 case CRYSTAL:
-                    ClientProxy.registerItemModel(this, i, "crystal");
+                    MekOres.PROXY.registerItemModel(this, i, "crystal");
                     break;
                 case SHARD:
-                    ClientProxy.registerItemModel(this, i, "shard");
+                    MekOres.PROXY.registerItemModel(this, i, "shard");
                     break;
                 case CLUMP:
-                    ClientProxy.registerItemModel(this, i, "clump");
+                    MekOres.PROXY.registerItemModel(this, i, "clump");
                     break;
                 case DIRTY_DUST:
-                    ClientProxy.registerItemModel(this, i, "dirty_dust");
+                    MekOres.PROXY.registerItemModel(this, i, "dirty_dust");
                     break;
                 case DUST:
-                    ClientProxy.registerItemModel(this, i, "dust");
+                    MekOres.PROXY.registerItemModel(this, i, "dust");
             }
         }
     }

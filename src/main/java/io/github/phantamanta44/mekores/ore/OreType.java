@@ -1,5 +1,6 @@
 package io.github.phantamanta44.mekores.ore;
 
+import com.google.common.collect.Sets;
 import io.github.phantamanta44.mekores.MekOres;
 import io.github.phantamanta44.mekores.client.ClientEventListener;
 import io.github.phantamanta44.mekores.constant.LangConst;
@@ -8,6 +9,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
+
+import java.util.Arrays;
+import java.util.Set;
 
 public enum OreType {
 
@@ -70,12 +74,21 @@ public enum OreType {
     }
 
     public boolean isValid() {
-        return valid != null ? valid : (valid
-                = OreDictHelper.exists("ore" + key) && ((OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key))));
+        return valid == null ? (valid = isKeyValid(key)) : valid;
+    }
+
+    public void setValid() {
+        valid = true;
     }
 
     public int getColour() {
         return colour;
+    }
+
+    public static OreType getByKey(String key) {
+        return Arrays.stream(values())
+                .filter(v -> v.key.equals(key))
+                .findAny().orElse(null);
     }
 
     public static void cacheColours() {
@@ -114,6 +127,21 @@ public enum OreType {
                 }
             }
         }
+    }
+
+    private static final Set<String> BLACKLIST;
+
+    static {
+        BLACKLIST = Sets.newHashSet(
+                "Iron", "Gold", "Copper", "Tin", "Silver", "Lead", "Osmium",
+                "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine");
+    }
+
+    public static boolean isKeyValid(String key) {
+        if (OreDictHelper.exists("gem" + key) || BLACKLIST.contains(key))
+            return false;
+        return OreDictHelper.exists("ore" + key) &&
+                (OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key));
     }
 
 }
