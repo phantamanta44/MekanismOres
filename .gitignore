@@ -6,6 +6,7 @@
 # Compilation output
 /target/
 /build/
+/classes/
 /out/
 
 # Gradle stuff
