@@ -27,7 +27,8 @@
       "nuclearcraft",
       "galacticraftcore",
       "galacticraftplanets",
-      "extraplanets"
+      "extraplanets",
+      "metallurgy"
     ],
     "useDependencyInformation": true
   }

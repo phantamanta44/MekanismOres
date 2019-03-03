@@ -55,7 +55,32 @@ public enum OreType {
     TUNGSTEN("Tungsten"),
     ZINC("Zinc"),
     MERCURY("Mercury"),
-    PALLADIUM("Palladium");
+    PALLADIUM("Palladium"),
+
+    // metallurgy
+    ADAMANTINE("Adamantine"),
+    ALDUORITE("Alduorite"),
+    ASTRAL_SILVER("AstralSilver"),
+    ATLARUS("Atlarus"),
+    CARMOT("Carmot"),
+    CERUCLASE("Ceruclase"),
+    DEEP_IRON("DeepIron"),
+    EXIMITE("Eximite"),
+    IGNATIUS("Ignatius"),
+    INFUSCOLIUM("Infuscolium"),
+    KALENDRITE("Kalendrite"),
+    LEMURITE("Lemurite"),
+    MANGANESE("Manganese"),
+    MEUTOITE("Meutoite"),
+    MIDASIUM("Midasium"),
+    ORICHALCUM("Orichalcum"),
+    OURECLASE("Oureclase"),
+    PROMETHEUM("Prometheum"),
+    RUBRACIUM("Rubracium"),
+    SANGUINITE("Sanguinite"),
+    SHADOW_IRON("ShadowIron"),
+    VULCANITE("Vulcanite"),
+    VYROXERES("Vyroxeres");
 
     public final String key;
 
@@ -136,7 +161,7 @@ public enum OreType {
 
     static {
         BLACKLIST = Sets.newHashSet(
-                "Iron", "Gold", "Copper", "Tin", "Silver", "Lead", "Osmium",
+                "Iron", "Gold", "Copper", "Tin", "Silver", "Lead", "Osmium", "Bitumen", "Potash",
                 "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine");
     }
 
