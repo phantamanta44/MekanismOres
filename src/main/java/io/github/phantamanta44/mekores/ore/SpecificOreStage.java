@@ -2,6 +2,8 @@ package io.github.phantamanta44.mekores.ore;
 
 import net.minecraft.item.ItemStack;
 
+import java.util.Objects;
+
 public class SpecificOreStage {
 
     public final OreType type;
@@ -17,7 +19,7 @@ public class SpecificOreStage {
     }
 
     public ItemStack getOre(int qty) {
-        return stage.getOre(type.key, qty);
+        return Objects.requireNonNull(stage.getOre(type.key, qty));
     }
 
     public String getLocalizedName() {

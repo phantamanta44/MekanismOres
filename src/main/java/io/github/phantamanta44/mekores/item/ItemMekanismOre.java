@@ -18,9 +18,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ItemMekanismOre extends ItemModSubs {
 
+    @SuppressWarnings("NullableProblems")
     private static SpecificOreStage[] registry;
 
     public static SpecificOreStage getStage(ItemStack stack) {
@@ -126,7 +128,7 @@ public class ItemMekanismOre extends ItemModSubs {
                             ItemStack input = stage.getOre(1);
                             if (FurnaceRecipes.instance().getSmeltingResult(input).isEmpty()) {
                                 GameRegistry.addSmelting(input,
-                                        OreDictHelper.getStack("ingot" + stage.type.key, 1), 0);
+                                        Objects.requireNonNull(OreDictHelper.getStack("ingot" + stage.type.key, 1)), 0);
                             }
                         }
                         break;
@@ -136,7 +138,7 @@ public class ItemMekanismOre extends ItemModSubs {
     }
 
     private static ItemStack nextStage(SpecificOreStage stage, int count) {
-        return stage.stage.next().getOre(stage.type.key, count);
+        return Objects.requireNonNull(stage.stage.next().getOre(stage.type.key, count));
     }
 
 }

@@ -15,9 +15,11 @@ public class MekOres {
 
     public static final Logger LOGGER = LogManager.getLogger(MOConst.MOD_ID);
 
+    @SuppressWarnings("NullableProblems")
     @Mod.Instance(MOConst.MOD_ID)
     public static MekOres INSTANCE;
 
+    @SuppressWarnings("NullableProblems")
     @SidedProxy(
             serverSide = "io.github.phantamanta44.mekores.CommonProxy",
             clientSide = "io.github.phantamanta44.mekores.client.ClientProxy")

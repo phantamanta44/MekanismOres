@@ -5,6 +5,8 @@ import io.github.phantamanta44.mekores.constant.MOConst;
 import io.github.phantamanta44.mekores.util.OreDictHelper;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
+
 public enum OreStage {
 
     CRYSTAL("crystal"),
@@ -23,6 +25,7 @@ public enum OreStage {
         return prefix + ore;
     }
 
+    @Nullable
     public ItemStack getOre(String ore, int qty) {
         return OreDictHelper.getStack(getEntry(ore), qty);
     }

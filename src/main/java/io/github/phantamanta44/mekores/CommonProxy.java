@@ -1,9 +1,7 @@
 package io.github.phantamanta44.mekores;
 
-import io.github.phantamanta44.mekores.constant.MOConst;
 import io.github.phantamanta44.mekores.item.MOItems;
 import io.github.phantamanta44.mekores.ore.OreType;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -11,12 +9,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommonProxy {
@@ -40,7 +34,7 @@ public class CommonProxy {
                 String key = name.substring(3);
                 if (OreType.isKeyValid(key)) {
                     String mods = OreDictionary.getOres("ore" + key).stream()
-                            .map(o -> o.getItem().getRegistryName().getResourceDomain())
+                            .map(o -> Objects.requireNonNull(o.getItem().getRegistryName()).getResourceDomain())
                             .peek(modIds::add)
                             .collect(Collectors.joining(", "));
                     MekOres.LOGGER.info("Found ore {} from mod(s) {}", key, mods);
@@ -52,7 +46,7 @@ public class CommonProxy {
                 }
             }
         }
-        MekOres.LOGGER.info("Found ores from mod(s) {}", modIds.stream().collect(Collectors.joining(", ")));
+        MekOres.LOGGER.info("Found ores from mod(s) {}", String.join(", ", modIds));
     }
 
     public void queueRegistration(Item item) {

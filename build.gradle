@@ -26,9 +26,11 @@ minecraft {
 
 repositories {
     maven { url 'https://minecraft.curseforge.com/api/maven' }
+    maven { url 'https://jitpack.io/' }
 }
 
 dependencies {
+    compile 'com.github.phantamanta44:jsr305:1.0.1'
     compile 'mekanism:Mekanism-1.12.2:9.4.13.349:api'
 }
 

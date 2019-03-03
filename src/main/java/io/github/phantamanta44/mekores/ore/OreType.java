@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -58,6 +59,7 @@ public enum OreType {
 
     public final String key;
 
+    @Nullable
     private Boolean valid = null;
     private int colour = -1;
 
@@ -85,6 +87,7 @@ public enum OreType {
         return colour;
     }
 
+    @Nullable
     public static OreType getByKey(String key) {
         return Arrays.stream(values())
                 .filter(v -> v.key.equals(key))

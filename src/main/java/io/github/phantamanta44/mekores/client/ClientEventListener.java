@@ -13,6 +13,7 @@ import java.nio.IntBuffer;
 
 public class ClientEventListener {
 
+    @SuppressWarnings("NullableProblems")
     private static int[] atlas;
     private static int atlasWidth;
 

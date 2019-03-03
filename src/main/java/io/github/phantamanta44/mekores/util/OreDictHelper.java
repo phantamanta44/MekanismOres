@@ -3,10 +3,12 @@ package io.github.phantamanta44.mekores.util;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class OreDictHelper {
 
+    @Nullable
     public static ItemStack getStack(String entry, int qty) {
         List<ItemStack> items = OreDictionary.getOres(entry, false);
         if (items.isEmpty())

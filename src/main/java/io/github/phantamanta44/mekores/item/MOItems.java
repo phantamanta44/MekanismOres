@@ -5,6 +5,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+@SuppressWarnings("NullableProblems")
 public class MOItems {
 
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(MOConst.MOD_ID) {

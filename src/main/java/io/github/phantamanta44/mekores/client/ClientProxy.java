@@ -38,11 +38,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void onPostInit() {
-        super.onPostInit();
-    }
-
-    @Override
     public void registerItemModel(Item item, int meta, String name) {
         rendersToRegister.add(Triple.of(item, meta, new ModelResourceLocation(MOConst.MOD_PREF + name, "inventory")));
     }
