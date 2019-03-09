@@ -28,7 +28,8 @@
       "galacticraftcore",
       "galacticraftplanets",
       "extraplanets",
-      "metallurgy"
+      "metallurgy",
+      "taiga"
     ],
     "useDependencyInformation": true
   }

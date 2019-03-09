@@ -2,6 +2,7 @@ package io.github.phantamanta44.mekores.item;
 
 import io.github.phantamanta44.mekores.MekOres;
 import io.github.phantamanta44.mekores.constant.LangConst;
+import io.github.phantamanta44.mekores.constant.MOConst;
 import io.github.phantamanta44.mekores.item.base.ItemModSubs;
 import io.github.phantamanta44.mekores.ore.OreStage;
 import io.github.phantamanta44.mekores.ore.OreType;
@@ -9,6 +10,7 @@ import io.github.phantamanta44.mekores.ore.SpecificOreStage;
 import io.github.phantamanta44.mekores.util.GasHelper;
 import io.github.phantamanta44.mekores.util.IMCHelper;
 import io.github.phantamanta44.mekores.util.OreDictHelper;
+import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -18,7 +20,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
+
+import static io.github.phantamanta44.mekores.ore.OreStage.*;
 
 public class ItemMekanismOre extends ItemModSubs {
 
@@ -79,66 +84,61 @@ public class ItemMekanismOre extends ItemModSubs {
     }
 
     public void registerRecipes() {
-        for (SpecificOreStage stage : registry) {
-            if (stage.type.isValid()) {
-                switch (stage.stage) {
-                    case CRYSTAL:
-                        GasHelper.registerOreGas(stage.type);
-                        for (ItemStack stack : OreDictionary.getOres("ore" + stage.type.key)) {
-                            IMCHelper.addChemicalDissolutionRecipe(
-                                    stack, GasHelper.gasStack(stage.type.getName(), 1000));
-                        }
-                        IMCHelper.addChemicalWasherRecipe(
-                                GasHelper.gasStack(stage.type.getName(), 1),
-                                GasHelper.gasStack("clean" + stage.type.getName(), 1));
-                        IMCHelper.addChemicalCrystalizationRecipe(
-                                GasHelper.gasStack("clean" + stage.type.getName(), 200),
-                                stage.getOre(1));
-                        IMCHelper.addChemicalInjectionRecipe(
-                                stage.getOre(1),
-                                GasRegistry.getGas("hydrogenchloride"),
-                                nextStage(stage, 1));
-                        for (ItemStack stack : OreDictionary.getOres("ore" + stage.type.key)) {
-                            IMCHelper.addChemicalInjectionRecipe(
-                                    stack, GasRegistry.getGas("hydrogenchloride"), nextStage(stage, 4));
-                        }
-                        break;
-                    case SHARD:
-                        IMCHelper.addPurificationRecipe(
-                                stage.getOre(1),
-                                GasRegistry.getGas("oxygen"),
-                                nextStage(stage, 1));
-                        for (ItemStack stack : OreDictionary.getOres("ore" + stage.type.key)) {
-                            IMCHelper.addPurificationRecipe(
-                                    stack, GasRegistry.getGas("oxygen"), nextStage(stage, 3));
-                        }
-                        break;
-                    case CLUMP:
-                        IMCHelper.addCrusherRecipe(
-                                stage.getOre(1),
-                                nextStage(stage, 1));
-                        break;
-                    case DIRTY_DUST:
-                        IMCHelper.addEnrichmentRecipe(stage.getOre(1), nextStage(stage, 1));
-                        for (ItemStack stack : OreDictionary.getOres("ore" + stage.type.key))
-                            IMCHelper.addEnrichmentRecipe(stack, nextStage(stage, 2));
-                        break;
-                    case DUST:
-                        if (OreDictHelper.exists("ingot" + stage.type.key)) {
-                            ItemStack input = stage.getOre(1);
-                            if (FurnaceRecipes.instance().getSmeltingResult(input).isEmpty()) {
-                                GameRegistry.addSmelting(input,
-                                        Objects.requireNonNull(OreDictHelper.getStack("ingot" + stage.type.key, 1)), 0);
-                            }
-                        }
-                        break;
+        for (OreType type : OreType.values()) {
+            if (type.isValid()) {
+                Collection<ItemStack> ores = OreDictionary.getOres("ore" + type.key);
+                Gas hCl = GasRegistry.getGas("hydrogenchloride");
+                Gas oxygen = GasRegistry.getGas("oxygen");
+
+                // ore to crystals
+                GasHelper.registerOreGas(type);
+                for (ItemStack stack : ores) {
+                    IMCHelper.addChemicalDissolutionRecipe(stack, GasHelper.gasStack(type.getName(), 1000));
+                }
+                IMCHelper.addChemicalWasherRecipe(
+                        GasHelper.gasStack(type.getName(), 1), GasHelper.gasStack("clean" + type.getName(), 1));
+                IMCHelper.addChemicalCrystalizationRecipe(
+                        GasHelper.gasStack("clean" + type.getName(), 200), CRYSTAL.oreForType(type, 1));
+
+                // crystals to shards
+                IMCHelper.addChemicalInjectionRecipe(CRYSTAL.oreForType(type, 1), hCl, SHARD.oreForType(type, 1));
+
+                // ore to shards
+                for (ItemStack stack : ores) {
+                    IMCHelper.addChemicalInjectionRecipe(stack, hCl, SHARD.oreForType(type, 4));
+                }
+
+                // shards to clumps
+                IMCHelper.addPurificationRecipe(SHARD.oreForType(type, 1), oxygen, CLUMP.oreForType(type, 1));
+
+                // ore to clumps
+                for (ItemStack stack : ores) {
+                    IMCHelper.addPurificationRecipe(stack, oxygen, CLUMP.oreForType(type, 3));
+                }
+
+                // clumps to dirty dust
+                IMCHelper.addCrusherRecipe(CLUMP.oreForType(type, 1), DIRTY_DUST.oreForType(type, 1));
+
+                // dirty dust to dust
+                IMCHelper.addEnrichmentRecipe(DIRTY_DUST.oreForType(type, 1), DUST.oreForType(type, 1));
+
+                // ore to dust
+                for (ItemStack stack : ores) {
+                    IMCHelper.addEnrichmentRecipe(stack, DUST.oreForType(type, 2));
+                }
+
+                // dust to ingot
+                if (OreDictHelper.exists("ingot" + type.key) && OreDictionary.getOres(DUST.getEntry(type.key)).stream()
+                        .noneMatch(i -> Objects.requireNonNull(i.getItem().getRegistryName())
+                                .getResourceDomain().equals(MOConst.MOD_ID))) {
+                    ItemStack input = DUST.oreForType(type, 1);
+                    if (FurnaceRecipes.instance().getSmeltingResult(input).isEmpty()) {
+                        GameRegistry.addSmelting(input,
+                                Objects.requireNonNull(OreDictHelper.getStack("ingot" + type.key, 1)), 0);
+                    }
                 }
             }
         }
-    }
-
-    private static ItemStack nextStage(SpecificOreStage stage, int count) {
-        return Objects.requireNonNull(stage.stage.next().getOre(stage.type.key, count));
     }
 
 }

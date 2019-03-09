@@ -6,6 +6,7 @@ import io.github.phantamanta44.mekores.util.OreDictHelper;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public enum OreStage {
 
@@ -28,6 +29,10 @@ public enum OreStage {
     @Nullable
     public ItemStack getOre(String ore, int qty) {
         return OreDictHelper.getStack(getEntry(ore), qty);
+    }
+
+    public ItemStack oreForType(OreType type, int qty) {
+        return Objects.requireNonNull(getOre(type.key, qty));
     }
 
     public OreStage next() {

@@ -80,7 +80,22 @@ public enum OreType {
     SANGUINITE("Sanguinite"),
     SHADOW_IRON("ShadowIron"),
     VULCANITE("Vulcanite"),
-    VYROXERES("Vyroxeres");
+    VYROXERES("Vyroxeres"),
+
+    // taiga
+    // dilithium has no oredict entries for some reason, so we're not touching it
+    TIBERIUM("Tiberium"),
+    AURORIUM("Aurorium"),
+    DURANITE("Duranite"),
+    VALYRIUM("Valyrium"),
+    VIBRANIUM("Vibranium"),
+    KARMESINE("Karmesine"),
+    OVIUM("Ovium"),
+    JAUXUM("Jauxum"),
+    URU("Uru"),
+    OSRAM("Osram"),
+    EEZO("Eezo"),
+    ABYSSUM("Abyssum");
 
     public final String key;
 
