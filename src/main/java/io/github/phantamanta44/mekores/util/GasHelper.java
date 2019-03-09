@@ -21,7 +21,7 @@ public class GasHelper {
 
         private final OreType type;
 
-        public MekanismOreGas(OreType type, boolean clean) {
+        MekanismOreGas(OreType type, boolean clean) {
             super(clean ? "clean" + type.getName() : type.getName(), type.getName());
             this.type = type;
         }
@@ -34,6 +34,11 @@ public class GasHelper {
         @Override
         public String getLocalizedName() {
             return LangConst.get(LangConst.MISC_SLURRY, type.getLocalizedName());
+        }
+
+        @Override
+        public int getTint() {
+            return type.getColour();
         }
 
     }
