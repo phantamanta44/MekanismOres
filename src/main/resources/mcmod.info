@@ -29,7 +29,8 @@
       "galacticraftplanets",
       "extraplanets",
       "metallurgy",
-      "taiga"
+      "taiga",
+      "basemetals"
     ],
     "useDependencyInformation": true
   }

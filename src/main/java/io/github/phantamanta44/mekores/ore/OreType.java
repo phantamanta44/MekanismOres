@@ -184,7 +184,9 @@ public enum OreType {
         if (OreDictHelper.exists("gem" + key) || BLACKLIST.contains(key))
             return false;
         return OreDictHelper.exists("ore" + key) &&
-                (OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key));
+                (OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key))
+                && !(OreDictHelper.exists("crystal" + key) && OreDictHelper.exists("shard" + key)
+                && OreDictHelper.exists("clump" + key) && OreDictHelper.exists("dustDirty" + key));
     }
 
 }

@@ -23,6 +23,7 @@ public class CommonProxy {
     }
 
     public void onInit() {
+        MOItems.mekanismOre.registerOreDict();
         MOItems.mekanismOre.registerRecipes();
     }
 

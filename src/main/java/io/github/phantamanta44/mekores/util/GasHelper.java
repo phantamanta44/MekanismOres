@@ -2,6 +2,7 @@ package io.github.phantamanta44.mekores.util;
 
 import io.github.phantamanta44.mekores.constant.LangConst;
 import io.github.phantamanta44.mekores.ore.OreType;
+import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.OreGas;
@@ -13,8 +14,17 @@ public class GasHelper {
     }
 
     public static void registerOreGas(OreType type) {
-        OreGas clean = (OreGas)GasRegistry.register(new MekanismOreGas(type, true)).setVisible(false);
-        GasRegistry.register(new MekanismOreGas(type, false).setCleanGas(clean).setVisible(false));
+        Gas cleanGas = GasRegistry.getGas("clean" + type.getName());
+        if (cleanGas == null) {
+            cleanGas = GasRegistry.register(new MekanismOreGas(type, true)).setVisible(false);
+        }
+        if (GasRegistry.getGas(type.getName()) == null) {
+            OreGas dirtyGas = new MekanismOreGas(type, false);
+            if (cleanGas instanceof OreGas) {
+                dirtyGas.setCleanGas((OreGas)cleanGas);
+            }
+            GasRegistry.register(dirtyGas.setVisible(false));
+        }
     }
 
     private static class MekanismOreGas extends OreGas {
