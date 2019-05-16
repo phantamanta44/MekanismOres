@@ -30,7 +30,8 @@
       "extraplanets",
       "metallurgy",
       "taiga",
-      "basemetals"
+      "basemetals",
+      "valoegheses_be"
     ],
     "useDependencyInformation": true
   }

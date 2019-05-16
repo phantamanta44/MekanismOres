@@ -95,7 +95,10 @@ public enum OreType {
     URU("Uru"),
     OSRAM("Osram"),
     EEZO("Eezo"),
-    ABYSSUM("Abyssum");
+    ABYSSUM("Abyssum"),
+
+    // zoesteria
+    VANADIUM("Vanadium");
 
     public final String key;
 
