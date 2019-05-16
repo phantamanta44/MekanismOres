@@ -2,7 +2,6 @@ package io.github.phantamanta44.mekores.item;
 
 import io.github.phantamanta44.mekores.MekOres;
 import io.github.phantamanta44.mekores.constant.LangConst;
-import io.github.phantamanta44.mekores.constant.MOConst;
 import io.github.phantamanta44.mekores.item.base.ItemModSubs;
 import io.github.phantamanta44.mekores.ore.OreStage;
 import io.github.phantamanta44.mekores.ore.OreType;
@@ -21,7 +20,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 
 import static io.github.phantamanta44.mekores.ore.OreStage.*;
 
@@ -43,7 +41,7 @@ public class ItemMekanismOre extends ItemModSubs {
         return registry.length;
     }
 
-    public ItemMekanismOre() {
+    ItemMekanismOre() {
         super(LangConst.ITEM_MEK_ORE_NAME, buildRegistry());
         for (int i = 0; i < registry.length; i++) {
             SpecificOreStage stage = registry[i];
@@ -128,13 +126,11 @@ public class ItemMekanismOre extends ItemModSubs {
                 }
 
                 // dust to ingot
-                if (OreDictHelper.exists("ingot" + type.key) && OreDictionary.getOres(DUST.getEntry(type.key)).stream()
-                        .noneMatch(i -> Objects.requireNonNull(i.getItem().getRegistryName())
-                                .getResourceDomain().equals(MOConst.MOD_ID))) {
-                    ItemStack input = DUST.oreForType(type, 1);
-                    if (FurnaceRecipes.instance().getSmeltingResult(input).isEmpty()) {
-                        GameRegistry.addSmelting(input,
-                                Objects.requireNonNull(OreDictHelper.getStack("ingot" + type.key, 1)), 0);
+                if (OreDictionary.getOres(DUST.getEntry(type.key)).stream()
+                        .allMatch(is -> FurnaceRecipes.instance().getSmeltingResult(is).isEmpty())) {
+                    ItemStack ingotStack = OreDictHelper.getStack("ingot" + type.key, 1);
+                    if (ingotStack != null) {
+                        GameRegistry.addSmelting(DUST.oreForType(type, 1), ingotStack, 0);
                     }
                 }
             }
