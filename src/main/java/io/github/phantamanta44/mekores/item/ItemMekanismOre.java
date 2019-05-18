@@ -20,6 +20,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static io.github.phantamanta44.mekores.ore.OreStage.*;
 
@@ -135,8 +136,10 @@ public class ItemMekanismOre extends ItemModSubs {
                     }
 
                     // dust to ingot
-                    if (OreDictionary.getOres(DUST.getEntry(type.key)).stream()
-                            .allMatch(is -> FurnaceRecipes.instance().getSmeltingResult(is).isEmpty())) {
+                    List<ItemStack> dusts = OreDictionary.getOres(DUST.getEntry(type.key));
+                    // only add the recipe if no other mods add a dust for this metal type
+                    // deals with the possible case where dust-to-ingot processing involves more than a furnace
+                    if (dusts.stream().allMatch(is -> is.getItem() instanceof ItemMekanismOre)) {
                         ItemStack ingotStack = OreDictHelper.getStack("ingot" + type.key, 1);
                         if (ingotStack != null) {
                             GameRegistry.addSmelting(DUST.oreForType(type, 1), ingotStack, 0);
