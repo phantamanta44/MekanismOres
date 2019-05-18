@@ -12,7 +12,10 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public enum OreType {
@@ -154,6 +157,7 @@ public enum OreType {
 
     public static void cacheColours() {
         MekOres.LOGGER.info("Caching ore colours...");
+        long time = -System.currentTimeMillis();
         for (OreType type : values()) {
             if (type.isValid()) {
                 ItemStack stack = OreDictHelper.getStack("ingot" + type.key, 1);
@@ -164,22 +168,55 @@ public enum OreType {
                         IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
                         TextureAtlasSprite sprite = model.getParticleTexture();
                         int[] atlas = ClientEventListener.getAtlas();
-                        int rBin = 0, gBin = 0, bBin = 0, total = 0;
+                        List<int[]> rgbData = new ArrayList<>();
+                        List<float[]> hsvData = new ArrayList<>();
+                        float hMean = 0F, sMean = 0F, bMean = 0F;
                         for (int y = 0; y < sprite.getIconHeight(); y++) {
                             for (int x = 0; x < sprite.getIconWidth(); x++) {
                                 int index = (y + sprite.getOriginY()) * ClientEventListener.getAtlasWidth() + x + sprite.getOriginX();
-                                int value = ((atlas[index]) & 0xFF) << 24
-                                        | ((atlas[index] >> 8) & 0xFF) << 16
-                                        | ((atlas[index] >> 16) & 0xFF) << 8
-                                        | ((atlas[index] >> 24) & 0xFF);
-                                int alpha = (value >>> 24) & 0xFF;
-                                if (alpha > 127) {
-                                    rBin += (value >>> 16) & 0xFF;
-                                    gBin += (value >>> 8) & 0xFF;
-                                    bBin += value & 0xFF;
-                                    total++;
+                                if ((atlas[index] & 0xFF) > 127) {
+                                    int[] rgb = new int[] {
+                                            (atlas[index] >> 8) & 0xFF,
+                                            (atlas[index] >> 16) & 0xFF,
+                                            (atlas[index] >> 24) & 0xFF
+                                    };
+                                    rgbData.add(rgb);
+                                    float[] hsb = Color.RGBtoHSB(rgb[0], rgb[1], rgb[2], null);
+                                    hsvData.add(hsb);
+                                    hMean += hsb[0];
+                                    sMean += hsb[1];
+                                    bMean += hsb[2];
                                 }
                             }
+                        }
+                        if (hsvData.size() == 0) {
+                            MekOres.LOGGER.warn("Using fallback colour; no suitably opaque pixels: " + type.name());
+                            type.colour = computeFallbackColour(atlas, sprite);
+                            continue;
+                        }
+                        hMean /= hsvData.size();
+                        double hStdDev = standardDeviation(hsvData, 0, hMean);
+                        sMean /= hsvData.size();
+                        double sStdDev = standardDeviation(hsvData, 1, sMean);
+                        bMean /= hsvData.size();
+                        double bStdDev = standardDeviation(hsvData, 2, bMean);
+                        int rBin = 0, gBin = 0, bBin = 0, total = 0;
+                        for (int i = 0; i < hsvData.size(); i++) {
+                            float[] hsv = hsvData.get(i);
+                            if (withinStdDev(hsv[0], hMean, hStdDev)
+                                    && withinStdDev(hsv[1], sMean, sStdDev)
+                                    && withinStdDev(hsv[2], bMean, bStdDev)) {
+                                int[] rgb = rgbData.get(i);
+                                rBin += rgb[0];
+                                gBin += rgb[1];
+                                bBin += rgb[2];
+                                ++total;
+                            }
+                        }
+                        if (total == 0) {
+                            MekOres.LOGGER.warn("Using fallback colour; no pixels in 1 stddev: " + type.name());
+                            type.colour = computeFallbackColour(atlas, sprite);
+                            continue;
                         }
                         type.colour = ((rBin / total) << 16) | ((gBin / total) << 8) | (bBin / total);
                     } catch (Exception e) {
@@ -188,6 +225,36 @@ public enum OreType {
                 }
             }
         }
+        time += System.currentTimeMillis();
+        MekOres.LOGGER.info("Computed ore colours in {} ms", time);
+    }
+
+    private static double standardDeviation(List<float[]> data, int index, float mean) {
+        return Math.sqrt(data.stream().mapToDouble(datum -> datum[index] - mean).map(x -> x * x).sum() / (data.size() - 1));
+    }
+
+    private static boolean withinStdDev(float datum, float mean, double stdDev) {
+        return Math.abs(datum - mean) <= stdDev;
+    }
+
+    private static int computeFallbackColour(int[] atlas, TextureAtlasSprite sprite) {
+        int rBin = 0, gBin = 0, bBin = 0, total = 0;
+        for (int y = 0; y < sprite.getIconHeight(); y++) {
+            for (int x = 0; x < sprite.getIconWidth(); x++) {
+                int index = (y + sprite.getOriginY()) * ClientEventListener.getAtlasWidth() + x + sprite.getOriginX();
+                if ((atlas[index] & 0xFF) > 0) {
+                    rBin += (atlas[index] >> 8) & 0xFF;
+                    gBin += (atlas[index] >> 16) & 0xFF;
+                    bBin += (atlas[index] >> 24) & 0xFF;
+                    ++total;
+                }
+            }
+        }
+        if (total == 0) {
+            MekOres.LOGGER.warn("Using a bland shade of grey; no non-empty pixels!");
+            return 0xFF424242;
+        }
+        return ((rBin / total) << 16) | ((gBin / total) << 8) | (bBin / total);
     }
 
     private static final Set<String> BLACKLIST;
