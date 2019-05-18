@@ -1,6 +1,7 @@
 package io.github.phantamanta44.mekores.ore;
 
 import com.google.common.collect.Sets;
+import io.github.phantamanta44.mekores.CommonProxy;
 import io.github.phantamanta44.mekores.MekOres;
 import io.github.phantamanta44.mekores.client.ClientEventListener;
 import io.github.phantamanta44.mekores.constant.LangConst;
@@ -195,6 +196,7 @@ public enum OreType {
         BLACKLIST = Sets.newHashSet(
                 "Iron", "Gold", "Copper", "Tin", "Silver", "Lead", "Osmium", "Bitumen", "Potash",
                 "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine");
+        BLACKLIST.addAll(Arrays.asList(CommonProxy.CONFIG.blacklist));
     }
 
     public static boolean isKeyValid(String key) {

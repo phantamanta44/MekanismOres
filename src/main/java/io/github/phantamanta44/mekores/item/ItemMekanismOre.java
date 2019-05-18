@@ -32,7 +32,7 @@ public class ItemMekanismOre extends ItemModSubs {
         return registry[stack.getMetadata()];
     }
 
-    private static int buildRegistry() { // TODO Configurability
+    private static int buildRegistry() {
         registry = Arrays.stream(OreType.values())
                 .peek(GasHelper::registerOreGas)
                 .flatMap(t -> Arrays.stream(OreStage.values()).map(s -> new SpecificOreStage(t, s)))
