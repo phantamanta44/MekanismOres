@@ -34,6 +34,7 @@ public class ItemMekanismOre extends ItemModSubs {
 
     private static int buildRegistry() { // TODO Configurability
         registry = Arrays.stream(OreType.values())
+                .peek(GasHelper::registerOreGas)
                 .flatMap(t -> Arrays.stream(OreStage.values()).map(s -> new SpecificOreStage(t, s)))
                 .toArray(SpecificOreStage[]::new);
         return registry.length;
@@ -98,7 +99,6 @@ public class ItemMekanismOre extends ItemModSubs {
                     Gas oxygen = GasRegistry.getGas("oxygen");
 
                     // ore to crystals
-                    GasHelper.registerOreGas(type);
                     for (ItemStack stack : ores) {
                         IMCHelper.addChemicalDissolutionRecipe(stack, GasHelper.gasStack(type.getName(), 1000));
                     }
