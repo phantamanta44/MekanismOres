@@ -98,7 +98,21 @@ public enum OreType {
     ABYSSUM("Abyssum"),
 
     // zoesteria
-    VANADIUM("Vanadium");
+    VANADIUM("Vanadium"),
+
+    // advent of ascension
+    BARONYTE("Baronyte"),
+    BLAZIUM("Blazium"),
+    ELECANIUM("Elecanium"),
+    EMBERSTONE("Emberstone"),
+    GHASTLY("Ghastly"),
+    GHOULISH("Ghoulish"),
+    LIMONITE("Limonite"),
+    LYON("Lyon"),
+    MYSTITE("Mystite"),
+    ROSITE("Rosite"),
+    SHYRESTONE("Shyrestone"),
+    VARSIUM("Varsium");
 
     public final String key;
 
