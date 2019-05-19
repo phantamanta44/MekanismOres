@@ -170,7 +170,7 @@ public enum OreType {
                         int[] atlas = ClientEventListener.getAtlas();
                         List<int[]> rgbData = new ArrayList<>();
                         List<float[]> hsvData = new ArrayList<>();
-                        float hMean = 0F, sMean = 0F, bMean = 0F;
+                        float hMean = 0F, sMean = 0F, bMean = 0F, weightTotal = 0;
                         for (int y = 0; y < sprite.getIconHeight(); y++) {
                             for (int x = 0; x < sprite.getIconWidth(); x++) {
                                 int index = (y + sprite.getOriginY()) * ClientEventListener.getAtlasWidth() + x + sprite.getOriginX();
@@ -182,10 +182,12 @@ public enum OreType {
                                     };
                                     rgbData.add(rgb);
                                     float[] hsb = Color.RGBtoHSB(rgb[0], rgb[1], rgb[2], null);
+                                    float weight = calcWeight(hsb);
                                     hsvData.add(hsb);
-                                    hMean += hsb[0];
-                                    sMean += hsb[1];
-                                    bMean += hsb[2];
+                                    hMean += hsb[0] * weight;
+                                    sMean += hsb[1] * weight;
+                                    bMean += hsb[2] * weight;
+                                    weightTotal += weight;
                                 }
                             }
                         }
@@ -194,12 +196,12 @@ public enum OreType {
                             type.colour = computeFallbackColour(atlas, sprite);
                             continue;
                         }
-                        hMean /= hsvData.size();
-                        double hStdDev = standardDeviation(hsvData, 0, hMean);
-                        sMean /= hsvData.size();
-                        double sStdDev = standardDeviation(hsvData, 1, sMean);
-                        bMean /= hsvData.size();
-                        double bStdDev = standardDeviation(hsvData, 2, bMean);
+                        hMean /= weightTotal;
+                        double hStdDev = weightedStdDev(hsvData, 0, hMean, weightTotal);
+                        sMean /= weightTotal;
+                        double sStdDev = weightedStdDev(hsvData, 1, sMean, weightTotal);
+                        bMean /= weightTotal;
+                        double bStdDev = weightedStdDev(hsvData, 2, bMean, weightTotal);
                         int rBin = 0, gBin = 0, bBin = 0, total = 0;
                         for (int i = 0; i < hsvData.size(); i++) {
                             float[] hsv = hsvData.get(i);
@@ -229,8 +231,18 @@ public enum OreType {
         MekOres.LOGGER.info("Computed ore colours in {} ms", time);
     }
 
-    private static double standardDeviation(List<float[]> data, int index, float mean) {
-        return Math.sqrt(data.stream().mapToDouble(datum -> datum[index] - mean).map(x -> x * x).sum() / (data.size() - 1));
+    private static float calcWeight(float[] hsb) {
+        // kind of gross step function but it seems to produce okay results
+        return hsb[2] > 0.8F ? 1F : (hsb[2] > 0.5F ? 0.5F : 0.1F);
+    }
+
+    private static double weightedStdDev(List<float[]> data, int index, float mean, float weightTotal) {
+        float acc = 0;
+        for (float[] datum : data) {
+            float diff = datum[index] - mean;
+            acc += diff * diff * calcWeight(datum);
+        }
+        return Math.sqrt(acc * data.size() / ((data.size() - 1) * weightTotal));
     }
 
     private static boolean withinStdDev(float datum, float mean, double stdDev) {
