@@ -116,7 +116,10 @@ public enum OreType {
     MYSTITE("Mystite"),
     ROSITE("Rosite"),
     SHYRESTONE("Shyrestone"),
-    VARSIUM("Varsium");
+    VARSIUM("Varsium"),
+
+    // matter overdrive
+    TRITANIUM("Tritanium");
 
     public final String key;
 
