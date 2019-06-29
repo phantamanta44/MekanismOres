@@ -10,6 +10,7 @@ public class LangConst {
     public static final String MISC_KEY = MOConst.MOD_ID + ".misc.";
     public static final String MISC_ORE = MISC_KEY + "ore";
     public static final String MISC_SLURRY = MISC_KEY + "slurry";
+    public static final String MISC_SLURRY_CLEAN = MISC_SLURRY + "_clean";
 
     public static final String ORE_KEY = MOConst.MOD_ID + ".ore.";
 

@@ -82,4 +82,5 @@ mekores.ore.varsium=Varsium
 mekores.ore.tritanium=Tritanium
 
 mekores.misc.slurry=%s Slurry
+mekores.misc.slurry_clean=Clean %s Slurry
 mekores.misc.ore=%s Ore

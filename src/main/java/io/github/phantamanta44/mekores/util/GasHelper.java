@@ -30,10 +30,12 @@ public class GasHelper {
     private static class MekanismOreGas extends OreGas {
 
         private final OreType type;
+        private final boolean clean;
 
         MekanismOreGas(OreType type, boolean clean) {
             super(clean ? "clean" + type.getName() : type.getName(), type.getName());
             this.type = type;
+            this.clean = clean;
         }
 
         @Override
@@ -43,7 +45,7 @@ public class GasHelper {
 
         @Override
         public String getLocalizedName() {
-            return LangConst.get(LangConst.MISC_SLURRY, type.getLocalizedName());
+            return LangConst.get(clean ? LangConst.MISC_SLURRY_CLEAN : LangConst.MISC_SLURRY, type.getLocalizedName());
         }
 
         @Override
