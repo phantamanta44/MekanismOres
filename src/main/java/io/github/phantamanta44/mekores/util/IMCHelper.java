@@ -54,6 +54,13 @@ public class IMCHelper {
                 .withItemStack("output", output));
     }
 
+    public static void addCombiningRecipe(ItemStack inputA, ItemStack inputB, ItemStack output) {
+        message("CombinerRecipe", new BuildableTagCompound()
+                .withItemStack("input", inputA)
+                .withItemStack("extra", inputB)
+                .withItemStack("output", output));
+    }
+
     private static void message(String method, NBTTagCompound nbt) {
         FMLInterModComms.sendMessage(MOD_ID_MEKANISM, method, nbt);
     }

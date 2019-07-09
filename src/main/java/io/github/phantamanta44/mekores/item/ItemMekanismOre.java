@@ -12,10 +12,11 @@ import io.github.phantamanta44.mekores.util.OreDictHelper;
 import mekanism.api.gas.Gas;
 import mekanism.api.gas.GasRegistry;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Arrays;
@@ -145,6 +146,14 @@ public class ItemMekanismOre extends ItemModSubs {
                             GameRegistry.addSmelting(DUST.oreForType(type, 1), ingotStack, 0);
                         }
                     }
+
+                    // dust to ore
+                    ores.stream().findAny().ifPresent(oreStack -> {
+                        ItemStack cobble = new ItemStack(Blocks.COBBLESTONE, 1);
+                        for (ItemStack dust : dusts) {
+                            IMCHelper.addCombiningRecipe(ItemHandlerHelper.copyStackWithSize(dust, 8), cobble, oreStack);
+                        }
+                    });
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to register recipes for ore: " + type, e);
                 }
