@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum OreType {
 
@@ -61,6 +63,9 @@ public enum OreType {
     MERCURY("Mercury"),
     PALLADIUM("Palladium"),
 
+    // libvulpes/advanced rocketry
+    DILITHIUM("Dilithium"),
+
     // metallurgy
     ADAMANTINE("Adamantine"),
     ALDUORITE("Alduorite"),
@@ -87,7 +92,6 @@ public enum OreType {
     VYROXERES("Vyroxeres"),
 
     // taiga
-    // dilithium has no oredict entries for some reason, so we're not touching it
     TIBERIUM("Tiberium"),
     AURORIUM("Aurorium"),
     DURANITE("Duranite"),
@@ -273,16 +277,18 @@ public enum OreType {
     }
 
     private static final Set<String> BLACKLIST;
+    private static final Set<String> GEM_WHITELIST;
 
     static {
         BLACKLIST = Sets.newHashSet(
                 "Iron", "Gold", "Copper", "Tin", "Silver", "Lead", "Osmium", "Bitumen", "Potash",
                 "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine");
         BLACKLIST.addAll(Arrays.asList(CommonProxy.CONFIG.blacklist));
+        GEM_WHITELIST = Stream.of(DILITHIUM).map(t -> t.key).collect(Collectors.toSet());
     }
 
     public static boolean isKeyValid(String key) {
-        if (OreDictHelper.exists("gem" + key) || BLACKLIST.contains(key))
+        if ((OreDictHelper.exists("gem" + key) && !GEM_WHITELIST.contains(key)) || BLACKLIST.contains(key))
             return false;
         return OreDictHelper.exists("ore" + key) &&
                 (OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key))
