@@ -37,10 +37,14 @@ public class CommonProxy {
             if (name.startsWith("ore")) {
                 String key = name.substring(3);
                 OreType type = OreType.getByKey(name.substring(3));
-                if (type != null && type.isValid()) {
+                if (type != null) {
                     reportOre(type.key, modIds);
-                    type.setValid();
-                    ++valid;
+                    if (type.isValid()) {
+                        ++valid;
+                    } else {
+                        MekOres.LOGGER.warn("Ore {} was marked as invalid! This might be a bug.", type.key);
+                        ++invalid;
+                    }
                 } else if (OreType.isKeyValid(key)) {
                     reportOre(key, modIds);
                     MekOres.LOGGER.warn("Unknown ore {}!", key);
