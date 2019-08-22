@@ -20,12 +20,14 @@ public class CommonProxy {
 
     private final Collection<Item> itemsToRegister = new LinkedList<>();
     private final Collection<Pair<ItemStack, String>> oresToRegister = new LinkedList<>();
+    private boolean initialized = false;
 
     public void onPreInit() {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void onInit() {
+        initialized = true;
         MOItems.mekanismOre.registerOreDict();
         MOItems.mekanismOre.registerRecipes();
     }
@@ -71,6 +73,10 @@ public class CommonProxy {
                 .peek(modIds::add)
                 .collect(Collectors.joining(", "));
         MekOres.LOGGER.info("Found ore {} from mod(s) {}", key, mods);
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
     public void queueRegistration(Item item) {

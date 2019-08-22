@@ -1,5 +1,6 @@
 package io.github.phantamanta44.mekores.ore;
 
+import io.github.phantamanta44.mekores.MekOres;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -30,6 +31,11 @@ public class SpecificOreStage {
     }
 
     public boolean isValid() {
+        if (!MekOres.PROXY.isInitialized()) {
+            MekOres.LOGGER.warn("Validation occurring early for stage {}{}!", stage.prefix, type.key);
+            MekOres.LOGGER.warn("You may get inconsistent results!", new IllegalStateException());
+            return OreType.validateKey(type.key).isValid() && !stage.exists(type);
+        }
         return valid == null ? (valid = isValid0()) : valid;
     }
 

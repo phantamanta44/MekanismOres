@@ -151,6 +151,11 @@ public enum OreType {
     }
 
     public OreValidity getValidity() {
+        if (!MekOres.PROXY.isInitialized()) {
+            MekOres.LOGGER.warn("Validation occurring early for ore {}!", key);
+            MekOres.LOGGER.warn("You may get inconsistent results!", new IllegalStateException());
+            return validateKey(key);
+        }
         return validity == null ? (validity = validateKey(key)) : validity;
     }
 
