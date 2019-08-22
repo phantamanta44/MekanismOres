@@ -15,7 +15,7 @@ public class ItemMod extends Item {
     }
 
     protected void registerItem(String name) {
-        setUnlocalizedName(name);
+        setTranslationKey(name);
         if (!Item.REGISTRY.containsKey(new ResourceLocation(MOConst.MOD_ID, name))) {
             setRegistryName(name);
             MekOres.PROXY.queueRegistration(this);

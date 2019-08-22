@@ -57,7 +57,7 @@ public class CommonProxy {
 
     private static void reportOre(String key, Set<String> modIds) {
         String mods = OreDictionary.getOres("ore" + key).stream()
-                .map(o -> Objects.requireNonNull(o.getItem().getRegistryName()).getResourceDomain())
+                .map(o -> Objects.requireNonNull(o.getItem().getRegistryName()).getNamespace())
                 .peek(modIds::add)
                 .collect(Collectors.joining(", "));
         MekOres.LOGGER.info("Found ore {} from mod(s) {}", key, mods);

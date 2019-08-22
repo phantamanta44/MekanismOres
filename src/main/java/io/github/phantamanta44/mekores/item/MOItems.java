@@ -10,7 +10,7 @@ public class MOItems {
 
     public static final CreativeTabs CREATIVE_TAB = new CreativeTabs(MOConst.MOD_ID) {
         @Override
-        public ItemStack getTabIconItem() {
+        public ItemStack createIcon() {
             return new ItemStack(Items.IRON_INGOT);
         }
     };
