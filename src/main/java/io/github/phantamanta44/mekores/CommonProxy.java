@@ -41,7 +41,7 @@ public class CommonProxy {
                     reportOre(type.key, modIds);
                     if (type.isValid()) {
                         ++valid;
-                    } else {
+                    } else if (OreType.isKeyValid(key)) {
                         MekOres.LOGGER.warn("Ore {} was marked as invalid! This might be a bug.", type.key);
                         ++invalid;
                     }
