@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
 import java.awt.Color;
@@ -20,6 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+// only append to this enum!
+// otherwise, worlds from older versions will have items swapped around!
 public enum OreType {
 
     // big reactors
@@ -128,7 +131,7 @@ public enum OreType {
     public final String key;
 
     @Nullable
-    private Boolean valid = null;
+    private OreValidity validity = null;
     private int colour = -1;
 
     OreType(String key) {
@@ -144,11 +147,11 @@ public enum OreType {
     }
 
     public boolean isValid() {
-        return valid == null ? (valid = isKeyValid(key)) : valid;
+        return getValidity().isValid();
     }
 
-    public void setValid() {
-        valid = true;
+    public OreValidity getValidity() {
+        return validity == null ? (validity = validateKey(key)) : validity;
     }
 
     public int getColour() {
@@ -287,13 +290,40 @@ public enum OreType {
         GEM_WHITELIST = Stream.of(DILITHIUM).map(t -> t.key).collect(Collectors.toSet());
     }
 
-    public static boolean isKeyValid(String key) {
-        if ((OreDictHelper.exists("gem" + key) && !GEM_WHITELIST.contains(key)) || BLACKLIST.contains(key))
-            return false;
-        return OreDictHelper.exists("ore" + key) &&
-                (OreDictHelper.exists("ingot" + key) || OreDictHelper.exists("dust" + key))
-                && !(OreDictHelper.exists("crystal" + key) && OreDictHelper.exists("shard" + key)
-                && OreDictHelper.exists("clump" + key) && OreDictHelper.exists("dustDirty" + key));
+    public static OreValidity validateKey(String key) {
+        if (BLACKLIST.contains(key)) {
+            return OreValidity.INVALID_BLACKLIST;
+        }
+        if (!GEM_WHITELIST.contains(key)) {
+            List<ItemStack> gems = OreDictionary.getOres("gem" + key);
+            if (!gems.isEmpty()) {
+                return new OreValidity(OreValidity.Reason.INVALID_GEM, gems);
+            }
+        }
+        if (!OreDictHelper.exists("ore" + key)) {
+            return OreValidity.INVALID_NO_ORE;
+        }
+        if (!OreDictHelper.exists("ingot" + key) && !OreDictHelper.exists("dust" + key)) {
+            return OreValidity.INVALID_NO_RESULT;
+        }
+        List<ItemStack> dustsDirty = OreDictionary.getOres("dustDirty" + key);
+        if (dustsDirty.isEmpty()) {
+            return OreValidity.VALID;
+        }
+        List<ItemStack> clumps = OreDictionary.getOres("clump" + key);
+        if (clumps.isEmpty()) {
+            return OreValidity.VALID;
+        }
+        List<ItemStack> shards = OreDictionary.getOres("shard" + key);
+        if (shards.isEmpty()) {
+            return OreValidity.VALID;
+        }
+        List<ItemStack> crystals = OreDictionary.getOres("crystal" + key);
+        if (crystals.isEmpty()) {
+            return OreValidity.VALID;
+        }
+        return new OreValidity(OreValidity.Reason.INVALID_EXISTING_INTEGRATION,
+                Stream.of(crystals, shards, clumps, dustsDirty).flatMap(List::stream).collect(Collectors.toList()));
     }
 
 }

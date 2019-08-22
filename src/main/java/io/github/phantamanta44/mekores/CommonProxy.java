@@ -3,6 +3,7 @@ package io.github.phantamanta44.mekores;
 import io.github.phantamanta44.mekores.constant.MOConst;
 import io.github.phantamanta44.mekores.item.MOItems;
 import io.github.phantamanta44.mekores.ore.OreType;
+import io.github.phantamanta44.mekores.ore.OreValidity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,17 +39,26 @@ public class CommonProxy {
                 String key = name.substring(3);
                 OreType type = OreType.getByKey(name.substring(3));
                 if (type != null) {
-                    reportOre(type.key, modIds);
-                    if (type.isValid()) {
+                    OreValidity validity = type.getValidity();
+                    if (validity.isValid()) {
+                        reportOre(type.key, modIds);
                         ++valid;
-                    } else if (OreType.isKeyValid(key)) {
-                        MekOres.LOGGER.warn("Ore {} was marked as invalid! This might be a bug.", type.key);
+                    } else if (OreType.validateKey(key).isValid()) {
+                        reportOre(type.key, modIds);
+                        MekOres.LOGGER.warn("Ore {} was marked as {}! This might be a bug.", type.key, validity);
                         ++invalid;
+                    } else {
+                        MekOres.LOGGER.debug("Ore {} was marked {}.", type.key, validity);
                     }
-                } else if (OreType.isKeyValid(key)) {
-                    reportOre(key, modIds);
-                    MekOres.LOGGER.warn("Unknown ore {}!", key);
-                    ++invalid;
+                } else {
+                    OreValidity validity = OreType.validateKey(key);
+                    if (validity.isValid()) {
+                        reportOre(key, modIds);
+                        MekOres.LOGGER.warn("Unknown ore {}!", key);
+                        ++invalid;
+                    } else {
+                        MekOres.LOGGER.trace("Discovered ore {} with validity {}.", key, validity);
+                    }
                 }
             }
         }
