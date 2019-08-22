@@ -282,7 +282,7 @@ public enum OreType {
     static {
         BLACKLIST = Sets.newHashSet(
                 "Iron", "Gold", "Copper", "Tin", "Silver", "Lead", "Osmium", "Bitumen", "Potash",
-                "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine");
+                "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine", "CertusQuartz");
         BLACKLIST.addAll(Arrays.asList(CommonProxy.CONFIG.blacklist));
         GEM_WHITELIST = Stream.of(DILITHIUM).map(t -> t.key).collect(Collectors.toSet());
     }
