@@ -117,6 +117,22 @@ public class CommonProxy {
         })
         public static String[] blacklist = new String[0];
 
+        @Config.RequiresMcRestart
+        @Config.Comment({
+                "The multiplier for processing nether ores. Set to 0 to disable direct processing.",
+                "If disabled, nether ores must be smelted into overworld ores before processing."
+        })
+        @Config.RangeInt(min = 0)
+        public static int oreNetherMultiplier = 0;
+
+        @Config.RequiresMcRestart
+        @Config.Comment({
+                "The multiplier for processing end ores. Set to 0 to disable direct processing.",
+                "If disabled, end ores must be smelted into overworld ores before processing."
+        })
+        @Config.RangeInt(min = 0)
+        public static int oreEndMultiplier = 0;
+
     }
 
 }
