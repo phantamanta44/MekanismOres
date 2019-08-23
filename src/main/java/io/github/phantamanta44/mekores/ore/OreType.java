@@ -126,7 +126,10 @@ public enum OreType {
     VARSIUM("Varsium"),
 
     // matter overdrive
-    TRITANIUM("Tritanium");
+    TRITANIUM("Tritanium"),
+
+    // metallurgy (cont. 1)
+    LUTETIUM("Lutetium");
 
     public final String key;
 
@@ -290,7 +293,7 @@ public enum OreType {
     static {
         BLACKLIST = Sets.newHashSet(
                 "Iron", "Gold", "Copper", "Tin", "Silver", "Lead", "Osmium", "Bitumen", "Potash",
-                "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine", "CertusQuartz");
+                "Coal", "Sulfur", "Sulphur", "Redstone", "Electrotine", "CertusQuartz", "Aluminium");
         BLACKLIST.addAll(Arrays.asList(CommonProxy.CONFIG.blacklist));
         GEM_WHITELIST = Stream.of(DILITHIUM).map(t -> t.key).collect(Collectors.toSet());
     }

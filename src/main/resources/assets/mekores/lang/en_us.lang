@@ -81,6 +81,7 @@ mekores.ore.rosite=Rosite
 mekores.ore.shyrestone=Shyrestone
 mekores.ore.varsium=Varsium
 mekores.ore.tritanium=Tritanium
+mekores.ore.lutetium=Lutetium
 
 mekores.misc.slurry=%s Slurry
 mekores.misc.slurry_clean=Clean %s Slurry
