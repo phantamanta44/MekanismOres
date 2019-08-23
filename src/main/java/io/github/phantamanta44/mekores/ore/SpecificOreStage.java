@@ -32,9 +32,7 @@ public class SpecificOreStage {
 
     public boolean isValid() {
         if (!MekOres.PROXY.isInitialized()) {
-            MekOres.LOGGER.warn("Validation occurring early for stage {}{}!", stage.prefix, type.key);
-            MekOres.LOGGER.warn("You may get inconsistent results!", new IllegalStateException());
-            return OreType.validateKey(type.key).isValid() && !stage.exists(type);
+            return true; // ae2 likes to index all items before init sometimes, so whatever
         }
         return valid == null ? (valid = isValid0()) : valid;
     }
