@@ -301,7 +301,7 @@ public enum OreType {
             return OreValidity.INVALID_BLACKLIST;
         }
         if (!GEM_WHITELIST.contains(key)) {
-            List<ItemStack> gems = OreDictionary.getOres("gem" + key);
+            List<ItemStack> gems = OreDictionary.getOres("gem" + key, false);
             if (!gems.isEmpty()) {
                 return new OreValidity(OreValidity.Reason.INVALID_GEM, gems);
             }
@@ -312,19 +312,19 @@ public enum OreType {
         if (!OreDictHelper.exists("ingot" + key) && !OreDictHelper.exists("dust" + key)) {
             return OreValidity.INVALID_NO_RESULT;
         }
-        List<ItemStack> dustsDirty = OreDictionary.getOres("dustDirty" + key);
+        List<ItemStack> dustsDirty = OreDictionary.getOres("dustDirty" + key, false);
         if (dustsDirty.isEmpty()) {
             return OreValidity.VALID;
         }
-        List<ItemStack> clumps = OreDictionary.getOres("clump" + key);
+        List<ItemStack> clumps = OreDictionary.getOres("clump" + key, false);
         if (clumps.isEmpty()) {
             return OreValidity.VALID;
         }
-        List<ItemStack> shards = OreDictionary.getOres("shard" + key);
+        List<ItemStack> shards = OreDictionary.getOres("shard" + key, false);
         if (shards.isEmpty()) {
             return OreValidity.VALID;
         }
-        List<ItemStack> crystals = OreDictionary.getOres("crystal" + key);
+        List<ItemStack> crystals = OreDictionary.getOres("crystal" + key, false);
         if (crystals.isEmpty()) {
             return OreValidity.VALID;
         }

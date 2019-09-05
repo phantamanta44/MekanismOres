@@ -103,7 +103,7 @@ public class ItemMekanismOre extends ItemModSubs {
             if (type.isValid()) {
                 try {
                     MekOres.LOGGER.debug("Adding ore recipes for {}", type.key);
-                    Collection<ItemStack> ores = OreDictionary.getOres("ore" + type.key);
+                    Collection<ItemStack> ores = OreDictionary.getOres("ore" + type.key, false);
 
                     // ore to crystals
                     for (ItemStack stack : ores) {
@@ -142,7 +142,7 @@ public class ItemMekanismOre extends ItemModSubs {
                     }
 
                     // dust to ingot
-                    List<ItemStack> dusts = OreDictionary.getOres(DUST.getEntry(type.key));
+                    List<ItemStack> dusts = OreDictionary.getOres(DUST.getEntry(type.key), false);
                     // only add the recipe if no other mods add a dust for this metal type
                     // deals with the possible case where dust-to-ingot processing involves more than a furnace
                     if (dusts.stream().allMatch(is -> is.getItem() instanceof ItemMekanismOre)) {
@@ -163,7 +163,7 @@ public class ItemMekanismOre extends ItemModSubs {
                     // netherending ores and friends
                     if (CommonProxy.CONFIG.oreNetherMultiplier != 0) {
                         try {
-                            NonNullList<ItemStack> netherOres = OreDictionary.getOres("oreNether" + type.key);
+                            NonNullList<ItemStack> netherOres = OreDictionary.getOres("oreNether" + type.key, false);
                             if (!netherOres.isEmpty()) {
                                 MekOres.LOGGER.debug("Adding nether ore recipes for {}", type.key);
                                 registerMultRecipes(
@@ -175,7 +175,7 @@ public class ItemMekanismOre extends ItemModSubs {
                     }
                     if (CommonProxy.CONFIG.oreEndMultiplier != 0) {
                         try {
-                            NonNullList<ItemStack> endOres = OreDictionary.getOres("oreEnd" + type.key);
+                            NonNullList<ItemStack> endOres = OreDictionary.getOres("oreEnd" + type.key, false);
                             if (!endOres.isEmpty()) {
                                 MekOres.LOGGER.debug("Adding end ore recipes for {}", type.key);
                                 registerMultRecipes(
@@ -219,7 +219,7 @@ public class ItemMekanismOre extends ItemModSubs {
     }
 
     private static void registerMultRecipes(String prefix, String name, int mult, Gas hCl, Gas oxygen) {
-        registerMultRecipes(name.toLowerCase(), name, OreDictionary.getOres(prefix + name), mult, hCl, oxygen);
+        registerMultRecipes(name.toLowerCase(), name, OreDictionary.getOres(prefix + name, false), mult, hCl, oxygen);
     }
 
     private static void registerMultRecipes(String gasName, String key, List<ItemStack> ores, int mult,

@@ -68,7 +68,7 @@ public class CommonProxy {
     }
 
     private static void reportOre(String key, Set<String> modIds) {
-        String mods = OreDictionary.getOres("ore" + key).stream()
+        String mods = OreDictionary.getOres("ore" + key, false).stream()
                 .map(o -> Objects.requireNonNull(o.getItem().getRegistryName()).getNamespace())
                 .peek(modIds::add)
                 .collect(Collectors.joining(", "));

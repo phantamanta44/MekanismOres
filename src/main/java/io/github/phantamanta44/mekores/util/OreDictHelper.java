@@ -19,7 +19,7 @@ public class OreDictHelper {
     }
 
     public static boolean exists(String entry) {
-        return !OreDictionary.getOres(entry).isEmpty();
+        return !OreDictionary.getOres(entry, false).isEmpty();
     }
 
 }
