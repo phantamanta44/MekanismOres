@@ -2,6 +2,7 @@ package io.github.phantamanta44.mekores.client;
 
 import io.github.phantamanta44.mekores.MekOres;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -21,6 +22,7 @@ public class ClientEventListener {
     public void onTextureStitch(TextureStitchEvent.Post event) {
         MekOres.LOGGER.info("Texture stitch event caught.");
         try {
+            GlStateManager.bindTexture(event.getMap().getGlTextureId());
             int width = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
             int height = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
             if (width > 16 && height > 16) {
