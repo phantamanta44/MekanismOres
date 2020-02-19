@@ -3,6 +3,7 @@ package io.github.phantamanta44.mekores.ore;
 import com.google.common.collect.Sets;
 import io.github.phantamanta44.mekores.CommonProxy;
 import io.github.phantamanta44.mekores.MekOres;
+import io.github.phantamanta44.mekores.client.CachedAtlas;
 import io.github.phantamanta44.mekores.client.ClientEventListener;
 import io.github.phantamanta44.mekores.constant.LangConst;
 import io.github.phantamanta44.mekores.util.OreDictHelper;
@@ -10,6 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
@@ -171,9 +174,11 @@ public enum OreType {
                 .findAny().orElse(null);
     }
 
+    @SideOnly(Side.CLIENT)
     public static void cacheColours() {
         MekOres.LOGGER.info("Caching ore colours...");
         long time = -System.currentTimeMillis();
+        CachedAtlas atlas = ClientEventListener.getAndEvictCachedAtlas();
         for (OreType type : values()) {
             if (type.isValid()) {
                 ItemStack stack = OreDictHelper.getStack("ingot" + type.key, 1);
@@ -183,18 +188,17 @@ public enum OreType {
                     try {
                         IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(stack, null, null);
                         TextureAtlasSprite sprite = model.getParticleTexture();
-                        int[] atlas = ClientEventListener.getAtlas();
                         List<int[]> rgbData = new ArrayList<>();
                         List<float[]> hsvData = new ArrayList<>();
                         float hMean = 0F, sMean = 0F, bMean = 0F, weightTotal = 0;
                         for (int y = 0; y < sprite.getIconHeight(); y++) {
                             for (int x = 0; x < sprite.getIconWidth(); x++) {
-                                int index = (y + sprite.getOriginY()) * ClientEventListener.getAtlasWidth() + x + sprite.getOriginX();
-                                if ((atlas[index] & 0xFF) > 127) {
+                                int index = (y + sprite.getOriginY()) * atlas.width + x + sprite.getOriginX();
+                                if ((atlas.data[index] & 0xFF) > 127) {
                                     int[] rgb = new int[] {
-                                            (atlas[index] >> 8) & 0xFF,
-                                            (atlas[index] >> 16) & 0xFF,
-                                            (atlas[index] >> 24) & 0xFF
+                                            (atlas.data[index] >> 8) & 0xFF,
+                                            (atlas.data[index] >> 16) & 0xFF,
+                                            (atlas.data[index] >> 24) & 0xFF
                                     };
                                     rgbData.add(rgb);
                                     float[] hsb = Color.RGBtoHSB(rgb[0], rgb[1], rgb[2], null);
@@ -265,15 +269,16 @@ public enum OreType {
         return Math.abs(datum - mean) <= stdDev;
     }
 
-    private static int computeFallbackColour(int[] atlas, TextureAtlasSprite sprite) {
+    @SideOnly(Side.CLIENT)
+    private static int computeFallbackColour(CachedAtlas atlas, TextureAtlasSprite sprite) {
         int rBin = 0, gBin = 0, bBin = 0, total = 0;
         for (int y = 0; y < sprite.getIconHeight(); y++) {
             for (int x = 0; x < sprite.getIconWidth(); x++) {
-                int index = (y + sprite.getOriginY()) * ClientEventListener.getAtlasWidth() + x + sprite.getOriginX();
-                if ((atlas[index] & 0xFF) > 0) {
-                    rBin += (atlas[index] >> 8) & 0xFF;
-                    gBin += (atlas[index] >> 16) & 0xFF;
-                    bBin += (atlas[index] >> 24) & 0xFF;
+                int index = (y + sprite.getOriginY()) * atlas.width + x + sprite.getOriginX();
+                if ((atlas.data[index] & 0xFF) > 0) {
+                    rBin += (atlas.data[index] >> 8) & 0xFF;
+                    gBin += (atlas.data[index] >> 16) & 0xFF;
+                    bBin += (atlas.data[index] >> 24) & 0xFF;
                     ++total;
                 }
             }

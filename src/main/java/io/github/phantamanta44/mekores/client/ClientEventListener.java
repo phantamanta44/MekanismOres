@@ -1,5 +1,6 @@
 package io.github.phantamanta44.mekores.client;
 
+import com.google.common.base.Preconditions;
 import io.github.phantamanta44.mekores.MekOres;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,14 +10,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public class ClientEventListener {
 
-    @SuppressWarnings("NullableProblems")
-    private static int[] atlas;
-    private static int atlasWidth;
+    @Nullable
+    private static CachedAtlas cachedAtlas = null;
 
     @SubscribeEvent
     public void onTextureStitch(TextureStitchEvent.Post event) {
@@ -29,9 +30,8 @@ public class ClientEventListener {
                 MekOres.LOGGER.info("Caching {}x{} texture atlas...", width, height);
                 IntBuffer buf = ByteBuffer.allocateDirect(Integer.BYTES * width * height).asIntBuffer();
                 GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buf);
-                atlas = new int[buf.remaining()];
-                buf.get(atlas);
-                atlasWidth = width;
+                cachedAtlas = new CachedAtlas(new int[buf.remaining()], width);
+                buf.get(cachedAtlas.data);
                 MekOres.PROXY.cacheOreColours();
             } else {
                 MekOres.LOGGER.info("Ignoring {}x{} atlas stitch event.", width, height);
@@ -47,12 +47,11 @@ public class ClientEventListener {
             MekOres.PROXY.gameInit(); // Hacky, but works
     }
 
-    public static int[] getAtlas() {
+    public static CachedAtlas getAndEvictCachedAtlas() {
+        Preconditions.checkState(cachedAtlas != null, "No texture atlas is cached!");
+        CachedAtlas atlas = cachedAtlas;
+        cachedAtlas = null;
         return atlas;
-    }
-
-    public static int getAtlasWidth() {
-        return atlasWidth;
     }
 
 }
